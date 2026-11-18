@@ -1,0 +1,609 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>For Iva</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@500;700&display=swap">
+<style>
+  /* Layout: a plum night sky with twinkling stars, a glossy heart layer on top, and soft text scenes that fade over it. */
+  :root {
+    --bg0: #1d0716;
+    --bg1: #3d0f2e;
+    --bg2: #6a1b4d;
+    --pink: #ff6f9f;
+    --rose: #ff3d7a;
+    --blush: #ffd1e3;
+    --gold: #ffe29a;
+    --ink: #fff4f8;
+    --script: 'Dancing Script', 'Segoe Script', cursive;
+    --sans: 'Quicksand', system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden; color: var(--ink); font-family: var(--sans);
+    background: radial-gradient(120% 90% at 50% 0%, var(--bg2), var(--bg1) 45%, var(--bg0));
+    background-color: var(--bg0);
+    touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  canvas { display: block; }
+  #stars, #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  #stars { z-index: 0; }
+  #fx { z-index: 2; }
+
+  #hearts { position: fixed; inset: 0; z-index: 1; overflow: hidden; touch-action: none; }
+  .heart { position: absolute; left: 0; top: 0; border-radius: 46%; cursor: pointer; will-change: transform; touch-action: none; }
+  .heart::before { content: ""; position: absolute; inset: 0; background: var(--img) center / contain no-repeat; }
+  .heart.bob { animation: grow 0.5s var(--d, 0s) cubic-bezier(.2,1.4,.4,1) backwards, bob var(--bd, 3s) ease-in-out var(--d, 0s) infinite; }
+  .heart.pop { animation: pop 0.26s ease-out forwards; pointer-events: none; }
+  @keyframes grow { from { scale: 0; } to { scale: 1; } }
+  @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+  @keyframes pop { 0% { scale: 1; opacity: 1; } 35% { scale: 1.35; opacity: 1; } 100% { scale: 0; opacity: 0; } }
+
+  /* The gift box that holds the opening hearts, so every heart sits fully on screen. */
+  #box {
+    position: fixed; z-index: 1; box-sizing: border-box; padding: 14px; margin: 0 auto; max-width: 900px; border-radius: 28px;
+    left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px));
+    top: max(70px, calc(env(safe-area-inset-top, 0px) + 60px)); bottom: max(22px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+    background: linear-gradient(135deg, #ffe3ec 0%, #ff9dbd 26%, #d9487f 52%, #ff9dbd 76%, #ffe3ec 100%); background-size: 220% 220%;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4), 0 18px 50px rgba(0,0,0,0.5), 0 0 70px rgba(255,61,122,0.45);
+    animation: sheen 7s ease-in-out infinite, boxIn 0.9s cubic-bezier(.2,1.1,.3,1) backwards;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  #box::before { content: ""; position: absolute; inset: 5px; border-radius: 23px; border: 2px dashed rgba(255,255,255,0.8); pointer-events: none; }
+  #box.gone { opacity: 0; transform: scale(0.93) translateY(14px); pointer-events: none; }
+  #boxInner {
+    position: absolute; inset: 14px; border-radius: 15px; overflow: hidden; touch-action: none;
+    background: radial-gradient(100% 80% at 50% 30%, #c01a58, #8a1243 70%, #5c0b2e);
+    box-shadow: inset 0 8px 26px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(60,5,30,0.6);
+  }
+  .bow { position: absolute; left: 50%; top: -52px; width: 140px; height: auto; transform: translateX(-50%); pointer-events: none; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.35)); }
+  .cg { position: absolute; width: 34px; height: 34px; pointer-events: none; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.35)); }
+  .cg1 { left: -9px; top: -9px; transform: rotate(-18deg); } .cg2 { right: -9px; top: -9px; transform: rotate(18deg); }
+  .cg3 { left: -9px; bottom: -9px; transform: rotate(18deg); } .cg4 { right: -9px; bottom: -9px; transform: rotate(-18deg); }
+  @keyframes sheen { 0%, 100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
+  @keyframes boxIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } }
+
+  .scene {
+    position: fixed; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+    padding-block: max(20px, env(safe-area-inset-top, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    box-sizing: border-box; text-align: center;
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.7s ease, visibility 0s 0.7s;
+  }
+  .scene.on { opacity: 1; visibility: visible; transition: opacity 0.7s ease; }
+  .scene.on .tap { pointer-events: auto; }
+  #game { z-index: 1; padding: 0; gap: 0; justify-content: flex-start; align-items: stretch; }
+  #game.on { pointer-events: auto; }
+  #gcanvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+
+  #note, #win { background: radial-gradient(60% 50% at 50% 50%, rgba(29,7,22,0.6), transparent 75%); }
+  .script {
+    font-family: var(--script); font-weight: 600; font-size: clamp(28px, 5.4vw, 54px); line-height: 1.3;
+    max-width: 19em; margin: 0; text-wrap: balance; text-shadow: 0 2px 24px rgba(255,61,122,0.6), 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .w { display: inline-block; animation: wordIn 0.8s cubic-bezier(.2,.9,.3,1.1) both; }
+  @keyframes wordIn { from { opacity: 0; transform: translateY(16px) scale(0.85); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+  .btn {
+    font: 700 18px var(--sans); letter-spacing: 0.08em; color: #fff; border: 0; cursor: pointer;
+    padding: 15px 38px; border-radius: 999px; background: linear-gradient(135deg, #ff7aa8, #ff3d7a 55%, #e0215f);
+    box-shadow: 0 8px 28px rgba(255,61,122,0.5), inset 0 1px 0 rgba(255,255,255,0.45);
+    opacity: 0; transform: translateY(8px) scale(0.96); pointer-events: none; transition: opacity 0.6s, transform 0.6s, filter 0.2s;
+  }
+  .btn.on { opacity: 1; transform: none; pointer-events: auto; animation: throb 1.8s ease-in-out 0.6s infinite; }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: scale(0.96); }
+  .btn:focus-visible, .ghost:focus-visible, #mute:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @keyframes throb { 0%, 100% { box-shadow: 0 8px 28px rgba(255,61,122,0.45), inset 0 1px 0 rgba(255,255,255,0.45); } 50% { box-shadow: 0 8px 40px rgba(255,61,122,0.85), inset 0 1px 0 rgba(255,255,255,0.45); } }
+
+  #hudRain { justify-content: flex-end; pointer-events: none; padding-bottom: max(18px, env(safe-area-inset-bottom, 0px)); gap: 0; }
+  .ghost {
+    font: 700 14px var(--sans); letter-spacing: 0.06em; color: var(--blush); background: rgba(29,7,22,0.5);
+    border: 1px solid rgba(255,209,227,0.4); border-radius: 999px; padding: 9px 20px; cursor: pointer; backdrop-filter: blur(4px);
+  }
+  .ghost:hover { background: rgba(29,7,22,0.75); }
+  .pill {
+    position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+    display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px; border-radius: 999px;
+    background: rgba(29,7,22,0.5); border: 1px solid rgba(255,209,227,0.3); font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums;
+  }
+  .pill svg { width: 22px; height: 22px; }
+
+  #meter { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; }
+  #meter svg { width: 64px; height: 64px; filter: drop-shadow(0 0 10px rgba(255,61,122,0.7)); }
+  #mval { font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; min-width: 4ch; text-align: left; }
+  #hint { position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; gap: 46px; opacity: 0.85; pointer-events: none; transition: opacity 0.5s; }
+  #hint.off { opacity: 0; }
+  #hint svg { width: 26px; height: 26px; animation: nudge 1.2s ease-in-out infinite; }
+  #hint svg:first-child { animation-name: nudgeL; }
+  @keyframes nudge { 50% { transform: translateX(8px); } }
+  @keyframes nudgeL { 50% { transform: translateX(-8px); } }
+
+  .name {
+    font-family: var(--script); font-weight: 700; font-size: clamp(88px, 24vw, 220px); line-height: 1; margin: 0;
+    background: linear-gradient(180deg, #fff, #ffc2d9 55%, #ff7aa8); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 24px rgba(255,61,122,0.75)); animation: nameIn 1.2s cubic-bezier(.2,1.2,.3,1) both;
+  }
+  @keyframes nameIn { from { opacity: 0; transform: scale(0.4) rotate(-6deg); } to { opacity: 1; transform: none; } }
+  .bigheart { width: clamp(70px, 14vw, 120px); animation: beat 0.9s ease-in-out infinite; filter: drop-shadow(0 0 22px rgba(255,61,122,0.9)); }
+  @keyframes beat { 0%, 100% { scale: 1; } 15% { scale: 1.18; } 30% { scale: 1; } 45% { scale: 1.12; } }
+
+  #final { pointer-events: none; }
+  .big {
+    font-family: var(--sans); font-weight: 700; font-size: clamp(34px, 9.4vw, 104px); line-height: 1.06; letter-spacing: 0.02em;
+    max-width: 12em; margin: 0; text-wrap: balance; text-shadow: 0 0 34px rgba(255,61,122,0.85), 0 3px 10px rgba(29,7,22,0.7);
+  }
+    .big .hot { color: #ffb3cf; }
+
+  #mute {
+    position: fixed; z-index: 6; top: max(14px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px));
+    width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,209,227,0.35); background: rgba(29,7,22,0.5);
+    display: grid; place-items: center; cursor: pointer; color: var(--blush); padding: 0;
+  }
+  #mute svg { width: 20px; height: 20px; }
+  #mute .off { display: none; }
+  #mute.muted .on { display: none; }
+  #mute.muted .off { display: block; }
+  @media (prefers-reduced-motion: reduce) { .heart.bob { animation: grow 0.3s both; } .bigheart, .btn.on { animation: none; } }
+</style>
+
+<canvas id="stars"></canvas>
+<div id="hearts"></div>
+<div id="box">
+  <div id="boxInner"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <radialGradient id="hsg" cx="35%" cy="30%" r="85%"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#ff7aa2"/><stop offset="1" stop-color="#c2255c"/></radialGradient>
+    <symbol id="hs" viewBox="0 0 100 100"><path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z" fill="url(#hsg)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></symbol>
+    <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3cc"/><stop offset="1" stop-color="#e0306c"/></linearGradient>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fb3"/><stop offset="1" stop-color="#b81f55"/></linearGradient>
+  </defs></svg>
+  <svg class="bow" viewBox="0 0 120 76" aria-hidden="true">
+    <path d="M54 44 L34 72 L52 66 L60 48Z" fill="url(#bg2)"/><path d="M66 44 L86 72 L68 66 L60 48Z" fill="url(#bg2)"/>
+    <path d="M60 40C40 6 6 4 8 32c2 24 32 22 52 8z" fill="url(#bg1)"/><path d="M60 40C80 6 114 4 112 32c-2 24-32 22-52 8z" fill="url(#bg1)"/>
+    <path d="M18 22c8-8 22-6 30 4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+    <path d="M102 22c-8-8-22-6-30 4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="60" cy="40" r="11" fill="url(#bg1)" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+  </svg>
+  <svg class="cg cg1" aria-hidden="true"><use href="#hs"/></svg><svg class="cg cg2" aria-hidden="true"><use href="#hs"/></svg>
+  <svg class="cg cg3" aria-hidden="true"><use href="#hs"/></svg><svg class="cg cg4" aria-hidden="true"><use href="#hs"/></svg>
+</div>
+<canvas id="fx"></canvas>
+
+<section class="scene" id="note" data-show="msg1 msg2">
+  <p class="script" id="noteText"></p>
+  <button class="btn tap" id="next" type="button">Next</button>
+</section>
+
+<section class="scene" id="hudRain" data-show="rain">
+  <div class="pill" aria-label="Hearts popped">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z" fill="#ff5a8a"/></svg>
+    <span id="count">0</span>
+  </div>
+  <button class="ghost tap" id="giveup" type="button">give up bbg</button>
+</section>
+
+<section class="scene" id="game" data-show="game">
+  <canvas id="gcanvas"></canvas>
+  <div id="meter" aria-label="Hearts caught">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <clipPath id="hc"><path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z"/></clipPath>
+        <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9ec0"/><stop offset="1" stop-color="#ff2e63"/></linearGradient>
+      </defs>
+      <path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z" fill="rgba(255,255,255,0.12)"/>
+      <rect id="mfill" x="0" y="100" width="100" height="100" fill="url(#mg)" clip-path="url(#hc)"/>
+      <path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z" fill="none" stroke="#ffd1e3" stroke-width="4" stroke-linejoin="round"/>
+    </svg>
+    <span id="mval">0/20</span>
+  </div>
+  <div id="hint" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd1e3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd1e3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </div>
+</section>
+
+<section class="scene" id="win" data-show="win">
+  <h2 class="name" id="winName"></h2>
+  <svg class="bigheart" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="wg" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#ffc2d9"/><stop offset=".45" stop-color="#ff4d79"/><stop offset="1" stop-color="#a80f3d"/></radialGradient></defs><path d="M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z" fill="url(#wg)"/><ellipse cx="29" cy="24" rx="9" ry="5" fill="#fff" fill-opacity=".6" transform="rotate(-35 29 24)"/></svg>
+  <p class="script" id="winLine" hidden></p>
+  <button class="btn tap" id="nextWin" type="button">Next</button>
+</section>
+
+<section class="scene" id="final" data-show="final">
+  <h1 class="big" id="bigText"></h1>
+</section>
+
+<button id="mute" type="button" aria-label="Sound on or off">
+  <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg>
+  <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+</button>
+
+<script>
+(function () {
+  'use strict';
+
+  /* All words on the page. Edit here. */
+  const L = {
+    name: 'Iva',
+    msg1: 'see bbg the hearts u popped it was all my love and u thought that was it?',
+    msg2: 'i love u so much iva i wanted u to feel special.. u are so special to me. the way u are treated by ur friends i wanted to show u how special u are bbg\u{1F497}\u{1F497}',
+    final: 'YOU ARE THE BEST PERSON I MET IN THIS WHOLE BIG WORLD',
+    winLine: '' // congratulation line for the game win screen; empty shows only her name
+  };
+  const GOAL = 20;
+
+  const $ = id => document.getElementById(id);
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const scenes = document.querySelectorAll('[data-show]');
+
+  /* ---------- canvases ---------- */
+  let W = innerWidth, H = innerHeight, DPR = Math.min(devicePixelRatio || 1, 2);
+  const stars = $('stars'), sctx = stars.getContext('2d');
+  const fxc = $('fx'), fctx = fxc.getContext('2d');
+  const gc = $('gcanvas'), gctx = gc.getContext('2d');
+  function sizeAll() {
+    W = innerWidth; H = innerHeight;
+    [stars, fxc, gc].forEach(c => { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
+  }
+  addEventListener('resize', sizeAll); sizeAll();
+
+  /* ---------- heart art ---------- */
+  const HP = 'M50 90C20 66 6 48 6 30 6 16 17 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 13 0 24 10 24 24 0 18-14 36-44 60z';
+  const HEART = new Path2D(HP);
+  const SPARK = new Path2D('M0-1Q.12-.12 1 0Q.12 .12 0 1Q-.12 .12 -1 0Q-.12-.12 0-1Z');
+  const COLORS = ['#ff4d79', '#ff7aa2', '#ff2e63', '#ff9ec0', '#e8355f', '#ff6f91', '#d81b60'];
+  const GOLD = '#ffc94d';
+  function mix(hex, to, t) {
+    const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    const m = (a, z) => Math.round(a + (z - a) * t);
+    return 'rgb(' + m(r, to) + ',' + m(g, to) + ',' + m(b, to) + ')';
+  }
+  function heartSVG(c) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><radialGradient id="g" cx="35%" cy="30%" r="85%">' +
+      '<stop offset="0" stop-color="' + mix(c, 255, 0.5) + '"/><stop offset=".42" stop-color="' + c + '"/><stop offset="1" stop-color="' + mix(c, 0, 0.42) + '"/></radialGradient></defs>' +
+      '<path d="' + HP + '" fill="url(#g)"/><ellipse cx="29" cy="24" rx="9" ry="5" fill="#fff" fill-opacity=".62" transform="rotate(-35 29 24)"/>' +
+      '<circle cx="19" cy="34" r="2.4" fill="#fff" fill-opacity=".5"/></svg>';
+  }
+  const URLS = COLORS.map(c => 'url("data:image/svg+xml,' + encodeURIComponent(heartSVG(c)) + '")');
+  const IMGS = COLORS.concat([GOLD]).map(c => { const i = new Image(); i.src = 'data:image/svg+xml,' + encodeURIComponent(heartSVG(c)); return i; });
+
+  /* ---------- audio ---------- */
+  const A = { ctx: null, master: null, send: null, on: true, noise: null };
+  const midi = n => 440 * Math.pow(2, (n - 69) / 12);
+  function audioStart() {
+    if (A.ctx) { if (A.ctx.state === 'suspended') A.ctx.resume(); return; }
+    try {
+      const C = window.AudioContext || window.webkitAudioContext; const ctx = new C();
+      A.ctx = ctx; A.master = ctx.createGain(); A.master.gain.value = A.on ? 0.8 : 0; A.master.connect(ctx.destination);
+      const dl = ctx.createDelay(1); dl.delayTime.value = 0.29;
+      const fb = ctx.createGain(); fb.gain.value = 0.36;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+      A.send = ctx.createGain(); A.send.gain.value = 0.35;
+      A.send.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(A.master);
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      A.noise = buf;
+      startMusic();
+    } catch (e) { A.ctx = null; }
+  }
+  function note(f, t, dur, vol, type) {
+    const c = A.ctx; if (!c) return;
+    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    const o = c.createOscillator(); o.type = type || 'sine'; o.frequency.value = f; o.connect(g);
+    if (!type) { const o2 = c.createOscillator(), g2 = c.createGain(); o2.frequency.value = f * 2.01; g2.gain.value = 0.22; o2.connect(g2); g2.connect(g); o2.start(t); o2.stop(t + dur); }
+    g.connect(A.master); g.connect(A.send); o.start(t); o.stop(t + dur + 0.05);
+  }
+  const PENTA = [72, 74, 76, 79, 81, 84, 86, 88];
+  const sfx = {
+    pop(i) {
+      const c = A.ctx; if (!c) return; const t = c.currentTime;
+      const s = c.createBufferSource(); s.buffer = A.noise;
+      const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1400;
+      const g = c.createGain(); g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      s.connect(hp); hp.connect(g); g.connect(A.master); s.start(t); s.stop(t + 0.09);
+      const o = c.createOscillator(), og = c.createGain(); o.type = 'sine';
+      o.frequency.setValueAtTime(rnd(650, 900), t); o.frequency.exponentialRampToValueAtTime(170, t + 0.1);
+      og.gain.setValueAtTime(0.22, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+      o.connect(og); og.connect(A.master); o.start(t); o.stop(t + 0.12);
+      note(midi(PENTA[Math.min(7, Math.max(0, i | 0))] + 12), t + 0.02, 0.9, 0.06);
+    },
+    chime(i, vol) { if (A.ctx) note(midi(PENTA[i % 8]), A.ctx.currentTime, 1.1, vol || 0.12); },
+    catchHeart(i, gold) {
+      if (!A.ctx) return; const t = A.ctx.currentTime;
+      note(midi(PENTA[i % 8]), t, 1.0, 0.14); note(midi(PENTA[i % 8] + 12), t + 0.05, 0.8, 0.06);
+      if (gold) { note(midi(PENTA[(i + 2) % 8] + 12), t + 0.1, 0.9, 0.1); }
+    },
+    sparkle() { if (!A.ctx) return; const t = A.ctx.currentTime; [0, 2, 4, 6, 7].forEach((k, j) => note(midi(PENTA[k] + 12), t + j * 0.07, 0.8, 0.06)); },
+    next() { if (!A.ctx) return; const t = A.ctx.currentTime; note(midi(79), t, 0.7, 0.12); note(midi(84), t + 0.09, 0.9, 0.12); },
+    tada() { if (!A.ctx) return; const t = A.ctx.currentTime; [60, 64, 67, 72, 76, 79, 84].forEach((m, j) => note(midi(m + 12), t + j * 0.09, 1.6, 0.11)); note(midi(48), t, 2.4, 0.12, 'triangle'); }
+  };
+  const PROG = [[60, 64, 67, 72], [57, 60, 64, 69], [53, 57, 60, 65], [55, 59, 62, 67]];
+  const ARP = [0, 1, 2, 3, 2, 1, 2, 3];
+  function startMusic() {
+    let step = 0, next = A.ctx.currentTime + 0.3;
+    setInterval(() => {
+      const c = A.ctx; if (!c) return;
+      while (next < c.currentTime + 0.5) {
+        const ch = PROG[Math.floor(step / 8) % 4], pos = step % 8;
+        note(midi(ch[ARP[pos]] + 12), next, 1.7, 0.05);
+        if (pos === 0) note(midi(ch[0] - 12), next, 2.6, 0.08, 'triangle');
+        if (pos === 4) note(midi(ch[3] + 24), next, 1.4, 0.03);
+        next += 0.4; step++;
+      }
+    }, 120);
+  }
+  $('mute').addEventListener('click', e => {
+    e.stopPropagation(); A.on = !A.on; $('mute').classList.toggle('muted', !A.on);
+    if (A.master) A.master.gain.value = A.on ? 0.8 : 0;
+  });
+  addEventListener('pointerdown', audioStart);
+  addEventListener('keydown', audioStart);
+
+  /* ---------- particles ---------- */
+  const P = [];
+  function burst(x, y, col, size, k) {
+    k = k || 1; size = size || 60;
+    if (P.length > 700) return;
+    P.push({ t: 'ring', x, y, r: size * 0.2, vr: size * 3.2, col, life: 0.4, max: 0.4, vx: 0, vy: 0, g: 0, rot: 0, vr2: 0 });
+    for (let i = 0; i < Math.round(7 * k); i++) {
+      const a = rnd(0, 6.283), s = rnd(120, 320) * Math.min(1.4, size / 60);
+      P.push({ t: 'heart', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 90, g: 420, s: rnd(6, 14) * Math.min(1.3, size / 60 + 0.3), col, life: rnd(0.7, 1.2), max: 1.2, rot: rnd(0, 6), vr2: rnd(-5, 5) });
+    }
+    for (let i = 0; i < Math.round(10 * k); i++) {
+      const a = rnd(0, 6.283), s = rnd(60, 280);
+      P.push({ t: 'spark', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, g: 40, s: rnd(4, 10), col: pick(['#ffffff', '#ffe29a', '#ffd1e3']), life: rnd(0.5, 1), max: 1, rot: 0, vr2: 0 });
+    }
+  }
+  function drawSpark(c, x, y, s, col, a) {
+    c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = col; c.globalAlpha = a; c.fill(SPARK); c.restore();
+  }
+  function drawFx(dt) {
+    fctx.setTransform(DPR, 0, 0, DPR, 0, 0); fctx.clearRect(0, 0, W, H);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i]; p.life -= dt;
+      if (p.life <= 0) { P.splice(i, 1); continue; }
+      const a = Math.min(1, (p.life / p.max) * 1.8);
+      if (p.t === 'ring') {
+        p.r += p.vr * dt; fctx.globalAlpha = a * 0.7; fctx.strokeStyle = p.col; fctx.lineWidth = 3;
+        fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, 6.283); fctx.stroke(); continue;
+      }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.rot += p.vr2 * dt;
+      if (p.t === 'heart') {
+        fctx.save(); fctx.globalAlpha = a; fctx.fillStyle = p.col; fctx.translate(p.x, p.y); fctx.rotate(p.rot);
+        const sc = p.s / 50; fctx.scale(sc, sc); fctx.translate(-50, -50); fctx.fill(HEART); fctx.restore();
+      } else if (p.t === 'fall') {
+        const tw = 0.55 + 0.45 * Math.sin(p.life * 7 + p.rot);
+        drawSpark(fctx, p.x + Math.sin(p.life * 1.5 + p.rot) * 14, p.y, p.s, p.col, a * tw);
+      } else drawSpark(fctx, p.x, p.y, p.s, p.col, a);
+    }
+    fctx.globalAlpha = 1;
+  }
+
+  /* ---------- starry backdrop ---------- */
+  const STARS = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), s: rnd(2, 7), ph: rnd(0, 6), sp: rnd(0.8, 2.4), c: Math.random() < 0.3 ? '#ffe29a' : '#ffd1e3' }));
+  function drawStars() {
+    sctx.setTransform(DPR, 0, 0, DPR, 0, 0); sctx.clearRect(0, 0, W, H);
+    for (const s of STARS) drawSpark(sctx, s.x * W, s.y * H, s.s, s.c, 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(T * s.sp + s.ph)));
+  }
+
+  /* ---------- hearts layer ---------- */
+  const layer = $('hearts');
+  const hearts = new Set();
+  let T = 0, phase = 'fill', remaining = 0, popped = 0, spawning = false, rate = 0, cap = 150, acc = 0;
+  const sc = () => Math.min(1, Math.max(0.62, W / 900));
+  let combo = 0, lastPop = 0;
+
+  function makeHeart(x, y, size, o) {
+    const el = document.createElement('div'); el.className = 'heart';
+    const v = Math.floor(Math.random() * COLORS.length);
+    el.style.width = el.style.height = size + 'px';
+    el.style.setProperty('--img', URLS[v]);
+    const h = { el, x, y, size, v, rot: o.rot || 0, spin: o.spin || 0, vy: o.vy || 0, fall: !!o.fall, ph: rnd(0, 6), fr: rnd(0.8, 1.8), sw: rnd(8, 28), dead: false };
+    el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' + h.rot + 'deg)';
+    if (o.bob) { el.classList.add('bob'); el.style.setProperty('--d', o.d + 's'); el.style.setProperty('--bd', rnd(2.2, 3.8) + 's'); }
+    el._h = h; hearts.add(h); (o.parent || layer).appendChild(el);
+    return h;
+  }
+  function kill(h, quiet) {
+    if (h.dead) return; h.dead = true; h.el.classList.add('pop');
+    setTimeout(() => { h.el.remove(); hearts.delete(h); }, 280);
+    return !quiet;
+  }
+
+  function fillScreen() {
+    const inner = $('boxInner'), pad = 9;
+    const iw = inner.offsetWidth - pad * 2, ih = inner.offsetHeight - pad * 2;
+    const cols = iw < 520 ? 6 : Math.max(7, Math.round(iw / 88)), cell = iw / cols, size = cell * 1.34;
+    const rows = Math.max(2, Math.round((ih - size) / (cell * 0.8)) + 1), gap = (ih - size) / (rows - 1);
+    const list = [];
+    for (let k = 0; k < rows; k++) {
+      const odd = k % 2 === 1, n = odd ? cols - 1 : cols;
+      for (let c = 0; c < n; c++) {
+        const cx = pad + (odd ? (c + 1) * cell : (c + 0.5) * cell), cy = pad + size / 2 + k * gap;
+        list.push({ x: cx - size / 2 + rnd(-2, 2), y: cy - size / 2 + rnd(-2, 2), size });
+      }
+    }
+    for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
+    list.forEach(p => makeHeart(p.x, p.y, p.size, { parent: inner, rot: rnd(-12, 12), bob: true, d: rnd(0, 0.9) }));
+    remaining = list.length;
+  }
+
+  function spawnRain(y0) {
+    const size = rnd(44, 94) * sc();
+    makeHeart(rnd(0, W - size), y0 === undefined ? -size : y0, size, { fall: true, vy: rnd(120, 250) * Math.max(0.75, H / 900), rot: rnd(-20, 20), spin: rnd(-25, 25) });
+  }
+  function physics(dt) {
+    if (spawning) {
+      acc = Math.min(3, acc + dt * rate);
+      while (acc >= 1 && hearts.size < cap) { acc--; spawnRain(); }
+    }
+    for (const h of hearts) {
+      if (h.dead || !h.fall) continue;
+      h.y += h.vy * dt; h.x = Math.max(0, Math.min(W - h.size, h.x + Math.sin(T * h.fr + h.ph) * h.sw * dt)); h.rot += h.spin * dt;
+      if (h.y > H + h.size) { h.dead = true; hearts.delete(h); h.el.remove(); continue; }
+      h.el.style.transform = 'translate3d(' + h.x + 'px,' + h.y + 'px,0) rotate(' + h.rot + 'deg)';
+    }
+    if (phase === 'final') {
+      acc2 += dt * 20;
+      while (acc2 >= 1) { acc2--; P.push({ t: 'fall', x: rnd(0, W), y: -12, vx: 0, vy: rnd(50, 130), g: 0, s: rnd(4, 11), col: pick(['#ffffff', '#ffe29a', '#ffd1e3']), life: 9, max: 9, rot: rnd(0, 6), vr2: 0 }); }
+    }
+  }
+  let acc2 = 0;
+
+  function onDown(e) {
+    const el = e.target.closest('.heart'); if (!el) return;
+    const h = el._h; if (!h || h.dead) return;
+    e.preventDefault();
+    kill(h);
+    const now = performance.now(); combo = now - lastPop < 600 ? Math.min(7, combo + 1) : 0; lastPop = now;
+    const rr = el.getBoundingClientRect();
+    burst(rr.left + rr.width / 2, rr.top + rr.height / 2, COLORS[h.v], h.size);
+    sfx.pop(combo);
+    if (phase === 'fill') { if (--remaining <= 0) { setTimeout(() => $('box').classList.add('gone'), 500); setTimeout(() => showNote('msg1'), 1100); } }
+    else if (phase === 'rain') {
+      popped++; $('count').textContent = popped;
+      for (let i = 0; i < 2 && hearts.size < cap + 20; i++) spawnRain(-rnd(20, 140));
+    } else if (phase === 'final') { if (hearts.size < cap + 20) spawnRain(-rnd(20, 140)); }
+  }
+  layer.addEventListener('pointerdown', onDown);
+  $('boxInner').addEventListener('pointerdown', onDown);
+
+  function popAll() {
+    spawning = false;
+    [...hearts].forEach((h, i) => setTimeout(() => {
+      if (h.dead) return; kill(h);
+      burst(h.x + h.size / 2, h.y + h.size / 2, COLORS[h.v], h.size, 0.5);
+      if (i % 5 === 0) sfx.pop((i / 5) % 8);
+    }, Math.min(i * 14, 1000)));
+  }
+
+  /* ---------- scenes and text ---------- */
+  function go(name) {
+    phase = name;
+    scenes.forEach(s => s.classList.toggle('on', s.dataset.show.split(' ').indexOf(name) >= 0));
+  }
+  function reveal(el, text, step, hotWords) {
+    el.textContent = '';
+    const words = text.split(' ');
+    words.forEach((w, i) => {
+      const s = document.createElement('span'); s.className = 'w'; s.textContent = w;
+      if (hotWords && hotWords.indexOf(i) >= 0) s.classList.add('hot');
+      s.style.animationDelay = (i * step) + 's'; el.appendChild(s);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+    return words.length * step + 0.6;
+  }
+  function showNote(which) {
+    go(which); const btn = $('next'); btn.classList.remove('on');
+    const dur = reveal($('noteText'), L[which], 0.15);
+    sfx.sparkle();
+    setTimeout(() => btn.classList.add('on'), dur * 1000 + 400);
+  }
+
+  $('next').addEventListener('click', () => {
+    sfx.next(); $('next').classList.remove('on');
+    if (phase === 'msg1') startRain(); else if (phase === 'msg2') startGame();
+  });
+  $('giveup').addEventListener('click', () => {
+    if (phase !== 'rain') return; sfx.next(); popAll(); phase = 'transition';
+    setTimeout(() => showNote('msg2'), 1500);
+  });
+  $('nextWin').addEventListener('click', () => { sfx.next(); startFinal(); });
+
+  function startRain() {
+    go('rain'); popped = 0; $('count').textContent = '0'; rate = 5; cap = 130; spawning = true;
+    for (let i = 0; i < 64; i++) spawnRain(-rnd(0, H * 0.9) + H * 0.12);
+  }
+
+  /* ---------- the catching game ---------- */
+  const G = { on: false, pts: 0, list: [], bx: 0, tx: 0, sp: 0, done: false, moved: false };
+  function setMeter() {
+    $('mfill').setAttribute('y', (100 * (1 - Math.min(1, G.pts / GOAL))).toFixed(1));
+    $('mval').textContent = Math.min(G.pts, GOAL) + '/' + GOAL;
+  }
+  function startGame() {
+    go('game'); G.on = true; G.done = false; G.pts = 0; G.list.length = 0; G.moved = false;
+    G.bx = G.tx = W / 2; G.sp = 0.3; setMeter(); $('hint').classList.remove('off');
+  }
+  function moveTo(x) { if (!G.on) return; G.tx = x; if (!G.moved && Math.abs(x - W / 2) > 40) { G.moved = true; $('hint').classList.add('off'); } }
+  addEventListener('pointermove', e => moveTo(e.clientX));
+  addEventListener('pointerdown', e => { if (G.on) moveTo(e.clientX); });
+  addEventListener('keydown', e => { if (!G.on) return; if (e.key === 'ArrowLeft') moveTo(G.tx - 50); if (e.key === 'ArrowRight') moveTo(G.tx + 50); });
+
+  function drawBasket(bx, by, bw) {
+    const bh = bw * 0.5; gctx.save(); gctx.translate(bx, by);
+    const g = gctx.createLinearGradient(0, 0, 0, bh); g.addColorStop(0, '#ffe6ef'); g.addColorStop(0.5, '#ff9fc0'); g.addColorStop(1, '#e0527e');
+    gctx.fillStyle = g; gctx.beginPath(); gctx.moveTo(-bw / 2, 0); gctx.bezierCurveTo(-bw / 2 + 4, bh * 1.15, bw / 2 - 4, bh * 1.15, bw / 2, 0); gctx.closePath(); gctx.fill();
+    gctx.fillStyle = '#7a1a43'; gctx.beginPath(); gctx.ellipse(0, 0, bw / 2, 8, 0, 0, 6.283); gctx.fill();
+    gctx.strokeStyle = '#ffd1e3'; gctx.lineWidth = 4; gctx.beginPath(); gctx.ellipse(0, 0, bw / 2, 8, 0, 0, 6.283); gctx.stroke();
+    if (IMGS[0].complete) gctx.drawImage(IMGS[1], -13, bh * 0.28, 26, 26);
+    gctx.restore();
+  }
+  function gameUpdate(dt) {
+    const bw = W < 600 ? 106 : 136, by = H - bw * 0.5 - 56;
+    G.bx += (G.tx - G.bx) * Math.min(1, dt * 14);
+    G.sp -= dt;
+    if (G.sp <= 0 && !G.done) {
+      const size = rnd(46, 60) * Math.min(1, W / 700 + 0.3), gold = Math.random() < 0.15;
+      G.list.push({ x: rnd(size, W - size), y: -size, size, vy: rnd(170, 250) + G.pts * 3, v: gold ? 7 : Math.floor(Math.random() * 7), gold, ph: rnd(0, 6), rot: rnd(-0.3, 0.3) });
+      G.sp = Math.max(0.5, 0.95 - G.pts * 0.022);
+    }
+    gctx.setTransform(DPR, 0, 0, DPR, 0, 0); gctx.clearRect(0, 0, W, H);
+    for (let i = G.list.length - 1; i >= 0; i--) {
+      const g = G.list[i]; g.y += g.vy * dt; g.x += Math.sin(T * 1.6 + g.ph) * 22 * dt; g.rot += dt * 0.6 * Math.sin(g.ph);
+      if (!G.done && g.y + g.size * 0.3 >= by && g.y < by + 26 && Math.abs(g.x - G.bx) < bw / 2) {
+        G.pts += g.gold ? 2 : 1; setMeter();
+        burst(g.x, by, g.gold ? GOLD : COLORS[g.v], 50, g.gold ? 1.3 : 0.8);
+        sfx.catchHeart(G.pts, g.gold); G.list.splice(i, 1);
+        if (G.pts >= GOAL) { winGame(); }
+        continue;
+      }
+      if (g.y > H + g.size) { G.list.splice(i, 1); continue; }
+      const im = IMGS[g.v]; if (!im.complete) continue;
+      gctx.save(); gctx.translate(g.x, g.y); gctx.rotate(g.rot); gctx.drawImage(im, -g.size / 2, -g.size / 2, g.size, g.size); gctx.restore();
+    }
+    drawBasket(G.bx, by, bw);
+  }
+  function winGame() {
+    G.done = true; sfx.tada();
+    setTimeout(() => {
+      G.on = false; gctx.clearRect(0, 0, W, H);
+      $('winName').textContent = L.name;
+      if (L.winLine) { $('winLine').hidden = false; $('winLine').textContent = L.winLine; }
+      go('win');
+      for (let i = 0; i < 12; i++) setTimeout(() => burst(rnd(W * 0.12, W * 0.88), rnd(H * 0.12, H * 0.65), pick(COLORS.concat([GOLD])), 130, 2.4), i * 320);
+      setTimeout(() => $('nextWin').classList.add('on'), 2400);
+    }, 700);
+  }
+
+  /* ---------- finale ---------- */
+  function startFinal() {
+    $('nextWin').classList.remove('on');
+    go('final'); rate = 8; cap = 150; spawning = true; acc2 = 0;
+    for (let i = 0; i < 70; i++) spawnRain(-rnd(0, H * 0.9) + H * 0.1);
+    const words = L.final.split(' '), step = 0.42;
+    const hot = [words.indexOf('BEST'), words.indexOf('PERSON')];
+    reveal($('bigText'), L.final, step, hot);
+    words.forEach((w, i) => setTimeout(() => sfx.chime(i % 8, 0.13), i * step * 1000 + 100));
+    setTimeout(() => { sfx.tada(); for (let i = 0; i < 8; i++) setTimeout(() => burst(rnd(W * 0.1, W * 0.9), rnd(H * 0.1, H * 0.7), pick(COLORS.concat([GOLD])), 130, 2.2), i * 380); }, words.length * step * 1000 + 300);
+    setInterval(() => { if (phase === 'final') burst(rnd(W * 0.05, W * 0.95), rnd(H * 0.05, H * 0.8), pick(COLORS.concat([GOLD])), 90, 1.2); }, 1700);
+  }
+
+  /* ---------- main loop ---------- */
+  let last = performance.now();
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
+    physics(dt); if (G.on) gameUpdate(dt);
+    drawStars(); drawFx(dt);
+  }
+  fillScreen(); go('fill');
+  requestAnimationFrame(frame);
+  window.__iva = { get phase() { return phase; }, get hearts() { return hearts.size; }, get remaining() { return remaining; }, G };
+})();
+</script>
+
+</body></html>
